@@ -23,3 +23,6 @@ tmp/
 
 # Build output
 public/
+
+# Python files
+.venv

@@ -1,0 +1,86 @@
+#
+# This file configures pre-commit hooks to automate code quality checks.
+#
+# To install and use this locally:
+# 1. Ensure you have Python installed.
+# 2. Navigate to the root of the repo.
+# 3. Create a Python virtual environment:
+#    python3 -m venv .venv
+# 4. Activate the environment:
+#    source .venv/bin/activate
+# 5. Install pre-commit:
+#    pip install pre-commit
+# 6. Install the Git hooks:
+#    pre-commit install
+# 7. You can now deactivate the environment:
+#    deactivate
+#
+# For more information on configuring pre-commit, visit:
+# https://pre-commit.com/
+#
+# This configuration includes:
+# - Standard hooks for fixing common issues like trailing whitespace.
+# - A hook to validate files against the project's .editorconfig file.
+# - A local hook to run the project's existing ESLint and Prettier commands.
+#
+
+# --- Repositories for standard hooks ---
+repos:
+  # General-purpose hooks for code cleanliness
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v4.4.0
+    hooks:
+      - id: check-added-large-files
+      - id: check-merge-conflict
+      - id: check-executables-have-shebangs
+      - id: check-json
+      - id: check-shebang-scripts-are-executable
+      - id: check-symlinks
+      - id: check-yaml
+      - id: double-quote-string-fixer
+      - id: end-of-file-fixer
+      - id: mixed-line-ending
+      - id: pretty-format-json
+        args:
+          - --no-sort-keys
+      - id: trailing-whitespace
+
+  # --- EditorConfig checker hook ---
+  # This hook validates files against the .editorconfig rules.
+  # Note: This is a Python tool, so pre-commit will handle the Python dependency.
+  - repo: https://github.com/editorconfig-checker/editorconfig-checker.python
+    rev: '2.7.2'
+    hooks:
+      - id: editorconfig-checker
+
+  # --- Local hook for the TypeScript/JavaScript frontend and backend ---
+  # ensuring consistency with the existing ESLint and Prettier configurations.
+# - repo: https://github.com/prettier/prettier
+#   rev: 2.8.8
+#   hooks:
+#     # Hook to run Prettier on all supported frontend and backend files.
+#     - id: prettier
+#       name: Prettier
+#       files: '\.(js|ts|tsx|jsx|json|css|scss|md|yaml)$'
+#       # The 'always_run' is crucial for the format command to work correctly.
+  - repo: https://github.com/eslint/eslint
+    rev: v9.33.0
+    hooks:
+      # Hook to run ESLint on TypeScript and JavaScript files.
+      - id: eslint
+        name: ESLint
+        files: '\.(js|ts|tsx|jsx)$'
+
+  # --- Hooks for JSON and markdown files ---
+  - repo: https://github.com/Yelp/detect-secrets
+    rev: 'v1.5.0'
+    hooks:
+      # A simple hook to prevent you from accidentally committing "secrets"
+      # or other sensitive credentials like API keys.
+      #
+      # To generate the initial baseline file:
+      # 1. First, install the tool: `pip install detect-secrets`
+      # 2. Then, run a full repository scan:
+      #    detect-secrets scan --exclude-lines '"passwordless":' >.secrets.baseline
+      - id: detect-secrets
+        args: ['--baseline', '.secrets.baseline']
